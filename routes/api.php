@@ -36,7 +36,10 @@ Route::group([
     'middleware' => 'auth:api'
 
 ], function ($router){
-    Route::resource('/posts', 'PostsController');
+
+    
+    Route::resource('/posts', 'PostsController', ['parameters' => ['post' => 'id']]);
+    
 });
 
 

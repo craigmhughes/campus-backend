@@ -28,11 +28,6 @@ class PostsController extends Controller
     public function store(Request $request)
     {
 
-        // Only allow post creation if user is logged in.
-        // if(Auth::user()['id'] == null){
-        //     return response()->json(['error' => 'not logged in'], 401);
-        // }
-
         $rules = [
             'content' => 'required|max:1000'
         ];
@@ -59,11 +54,7 @@ class PostsController extends Controller
      */
     public function show($id)
     {
-        // if(Auth::user()['id'] == null){
-        //     return response()->json(['error' => 'not logged in'], 401);
-        // }
-
-        return response()->json(Post::all()->where('id', $id));
+        return response()->json(Post::find($id));
     }
 
     /**
@@ -75,7 +66,21 @@ class PostsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        
+        $rules = [
+            'content' => 'required|max:1000'
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if($validator->fails()){
+            return response()->json($validator->errors(), 400);
+        }
+
+        $post = Post::find($id);
+        $post->content = $request->content;
+        $post->save();
+
+        return response()->json($post, 200);
     }
 
     /**
@@ -86,6 +91,7 @@ class PostsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Post::find($id)->delete();
+        return response()->json(200);
     }
 }
