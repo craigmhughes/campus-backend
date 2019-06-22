@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Post;
+use Auth;
 
 class PostsController extends Controller
 {
@@ -13,17 +15,7 @@ class PostsController extends Controller
      */
     public function index()
     {
-        return Post::all();
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return response()->json(Post::all(), 200);
     }
 
     /**
@@ -34,7 +26,25 @@ class PostsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        // Only allow post creation if user is logged in.
+        if(Auth::user()['id'] == null){
+            return response()->json(['error' => 'not logged in'], 401);
+        }
+
+        $rules = [
+            'content' => 'required|max:1000'
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if($validator->fails()){
+            return response()->json($validator->errors(), 400);
+        }
+
+        $post = Post::create($request->all());
+        return response()->json($post, 201);
+
     }
 
     /**
