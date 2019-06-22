@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Post;
 use Auth;
+use Validator;
 
 class PostsController extends Controller
 {
@@ -43,6 +44,9 @@ class PostsController extends Controller
         }
 
         $post = Post::create($request->all());
+        $post->user_id = Auth::user()['id'];
+        $post->save();
+
         return response()->json($post, 201);
 
     }
