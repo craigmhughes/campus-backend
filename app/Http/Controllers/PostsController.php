@@ -29,9 +29,9 @@ class PostsController extends Controller
     {
 
         // Only allow post creation if user is logged in.
-        if(Auth::user()['id'] == null){
-            return response()->json(['error' => 'not logged in'], 401);
-        }
+        // if(Auth::user()['id'] == null){
+        //     return response()->json(['error' => 'not logged in'], 401);
+        // }
 
         $rules = [
             'content' => 'required|max:1000'
@@ -59,18 +59,11 @@ class PostsController extends Controller
      */
     public function show($id)
     {
-        //
-    }
+        // if(Auth::user()['id'] == null){
+        //     return response()->json(['error' => 'not logged in'], 401);
+        // }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        return response()->json(Post::all()->where('id', $id));
     }
 
     /**
@@ -82,7 +75,7 @@ class PostsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        
     }
 
     /**
