@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Validator;
 use App\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
@@ -113,5 +114,41 @@ class AuthController extends Controller
         
         // Run login function to return API access token.
         return $this->login();
+    }
+
+    public function update_user(Request $request){
+
+        // return $request;
+
+        $data = request(['profile_image']);
+
+        $validator = Validator::make($data, [
+            'profile_image' => ['nullable', 'image', 'mimes:jpeg,jpg', 'max:1999'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'error' => $validator->messages()]);
+        }
+
+        $user = auth()->user();
+
+        if($request->hasFile('profile_image')){
+
+            // return response()->json(true, 200);
+            
+            $file = request()->file('profile_image')->getClientOriginalName();
+            $filename = pathinfo($file, PATHINFO_FILENAME);
+            $ext = request()->file('profile_image')->getClientOriginalExtension();
+
+            $nameToSave = $filename.'_'.time().'.'.$ext;
+            $path = request()->file('profile_image')->storeAs('public/profile_images', $nameToSave);
+        
+            $user->profile_image = $path;
+
+        }
+
+        $user->save();
+        return response()->json($user, 200);
+        
     }
 }
