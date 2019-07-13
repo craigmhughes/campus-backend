@@ -8,6 +8,7 @@ use Validator;
 use App\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
+use Storage;
 
 class AuthController extends Controller
 {
@@ -123,7 +124,7 @@ class AuthController extends Controller
         $data = request(['profile_image']);
 
         $validator = Validator::make($data, [
-            'profile_image' => ['nullable', 'image', 'mimes:jpeg,jpg', 'max:1999'],
+            'profile_image' => ['nullable', 'image', 'mimes:jpeg,jpg,png', 'max:1999'],
         ]);
 
         if ($validator->fails()) {
@@ -133,17 +134,27 @@ class AuthController extends Controller
         $user = auth()->user();
 
         if($request->hasFile('profile_image')){
-
-            // return response()->json(true, 200);
             
             $file = request()->file('profile_image')->getClientOriginalName();
             $filename = pathinfo($file, PATHINFO_FILENAME);
             $ext = request()->file('profile_image')->getClientOriginalExtension();
 
             $nameToSave = $filename.'_'.time().'.'.$ext;
+            
+            // Stored path will be in public storage
             $path = request()->file('profile_image')->storeAs('public/profile_images', $nameToSave);
-        
-            $user->profile_image = $path;
+
+            // Create var and store old profile picture location here.
+            $former_filename = null;
+            preg_match("/[^\/]*\.(\w+)$/", $user->profile_image, $former_filename);
+            
+            // Delete old profile picture -- NOTE: Must sleep if user spam uploads
+            // it will delete new uploads too.
+            sleep(3);
+            Storage::delete("public/profile_images/".$former_filename[0]);
+            
+            // accessible url will be different to stored url
+            $user->profile_image = "storage/profile_images/".$nameToSave;
 
         }
 
