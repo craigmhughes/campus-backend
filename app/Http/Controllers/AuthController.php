@@ -150,8 +150,11 @@ class AuthController extends Controller
             
             // Delete old profile picture -- NOTE: Must sleep if user spam uploads
             // it will delete new uploads too.
-            sleep(3);
-            Storage::delete("public/profile_images/".$former_filename[0]);
+            if (count($former_filename) > 0){
+                sleep(1);
+                Storage::delete("public/profile_images/".$former_filename[0]);
+            }
+            
             
             // accessible url will be different to stored url
             $user->profile_image = "storage/profile_images/".$nameToSave;
