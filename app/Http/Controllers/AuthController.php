@@ -125,6 +125,9 @@ class AuthController extends Controller
 
         $validator = Validator::make($data, [
             'profile_image' => ['nullable', 'image', 'mimes:jpeg,jpg,png', 'max:1999'],
+            'name' => ['nullable', 'string', 'max:255'],
+            'email' => ['nullable', 'string', 'email', 'max:255', 'unique:users'],
+
         ]);
 
         if ($validator->fails()) {
@@ -159,6 +162,14 @@ class AuthController extends Controller
             // accessible url will be different to stored url
             $user->profile_image = "storage/profile_images/".$nameToSave;
 
+        }
+
+        if($request->has("name")){
+            $user->name = $request["name"];
+        }
+
+        if($request->has("email")){
+            $user->email = $request["email"];
         }
 
         $user->save();
