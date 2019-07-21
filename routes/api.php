@@ -42,3 +42,5 @@ Route::group([
     Route::resource('/posts', 'PostsController', ['parameters' => ['post' => 'id']]);
     
 });
+
+Route::post('/search/uni', 'SearchController@uni');
