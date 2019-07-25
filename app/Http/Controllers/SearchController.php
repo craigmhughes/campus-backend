@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Validator;
+use App\User;
 
 class SearchController extends Controller
 {
@@ -46,5 +48,23 @@ class SearchController extends Controller
         }
 
         return response()->json($matched_uni, 200);
+    }
+
+    public function users(Request $request){
+
+        $user = auth()->user();
+
+        // [University, Mentoring, Mentored in]
+        $search_params = [$user->uni_name, $user->mentor_subject, $user->mentee_subject];
+
+        $matched_users = User::where('uni_name', 'LIKE', '%'.$search_params[0].'%')->where('id', '!=', $user->id)->get();
+
+        if(strlen($search_params[0]) < 1){
+            return response()->json(["error" => "University name not given"], 404);
+        } else if (count($matched_users) < 1){
+            return response()->json(["error" => "No matched students"], 404);
+        }
+
+        return response()->json(["success" => $matched_users], 200);
     }
 }

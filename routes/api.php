@@ -40,7 +40,8 @@ Route::group([
 ], function ($router){
   
     Route::resource('/posts', 'PostsController', ['parameters' => ['post' => 'id']]);
+    Route::post('/search/uni', 'SearchController@uni');
+    Route::get('/search/users', 'SearchController@users');
     
 });
 
-Route::post('/search/uni', 'SearchController@uni');
