@@ -176,6 +176,14 @@ class AuthController extends Controller
             $user->uni_name = $request["uni_name"];
         }
 
+        if($request->has("mentor_subject")){
+            $user->mentor_subject = $request["mentor_subject"];
+        }
+
+        if($request->has("mentee_subject")){
+            $user->mentee_subject = $request["mentee_subject"];
+        }
+
         $user->save();
         return response()->json($user, 200);
         
