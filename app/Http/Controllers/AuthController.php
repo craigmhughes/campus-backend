@@ -127,7 +127,7 @@ class AuthController extends Controller
             'profile_image' => ['nullable', 'image', 'mimes:jpeg,jpg,png', 'max:1999'],
             'name' => ['nullable', 'string', 'max:255'],
             'email' => ['nullable', 'string', 'email', 'max:255', 'unique:users'],
-
+            'uni' => ['nullable', 'string', 'max:255'],
         ]);
 
         if ($validator->fails()) {
@@ -170,6 +170,10 @@ class AuthController extends Controller
 
         if($request->has("email")){
             $user->email = $request["email"];
+        }
+
+        if($request->has("uni_name")){
+            $user->uni_name = $request["uni_name"];
         }
 
         $user->save();
