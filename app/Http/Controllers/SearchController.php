@@ -60,8 +60,9 @@ class SearchController extends Controller
         // Return users that want to be mentored in the subject the searching user is mentoring &&
         // users that want to mentor in subjects the searching user would like to be mentored in.
         $matched_users = User::where('uni_name', 'LIKE', '%'.$search_params[0].'%')
-            ->where('id', '!=', $user->id)->where('mentor_subject', 'LIKE', $search_params[2])
-            ->orWhere('mentee_subject', 'LIKE', $search_params[1])->get();
+            ->where('mentor_subject', 'LIKE', $search_params[2])
+            ->orWhere('mentee_subject', 'LIKE', $search_params[1])
+            ->get()->except(Auth::id());
 
         if(strlen($search_params[0]) < 1){
             return response()->json(["error" => "University name not given"], 404);
