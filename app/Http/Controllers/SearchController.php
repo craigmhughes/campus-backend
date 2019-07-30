@@ -10,7 +10,7 @@ use App\User;
 class SearchController extends Controller
 {
     /**
-     * Return
+     * Return Autocomplete from existing university names.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
