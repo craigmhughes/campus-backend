@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateConnectionsList extends Migration
+class CreateConnections extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateConnectionsList extends Migration
      */
     public function up()
     {
-        Schema::create('connections_list', function (Blueprint $table) {
+        Schema::create('connections', function (Blueprint $table) {
             $table->bigIncrements('id');
 
             $table->unsignedBigInteger('user_id')->nullable();
@@ -33,6 +33,6 @@ class CreateConnectionsList extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('connections_list');
+        Schema::dropIfExists('connections');
     }
 }

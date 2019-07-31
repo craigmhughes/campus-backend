@@ -40,6 +40,8 @@ Route::group([
 ], function ($router){
   
     Route::resource('/posts', 'PostsController', ['parameters' => ['post' => 'id']]);
+    Route::resource('/connections', 'ConnectionsController');
+    Route::delete('/connections', 'ConnectionsController@destroy');
     Route::post('/search/uni', 'SearchController@uni');
     Route::get('/search/users', 'SearchController@users');
     
