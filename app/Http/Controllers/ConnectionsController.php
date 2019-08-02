@@ -75,6 +75,7 @@ class ConnectionsController extends Controller
      */
     public function destroy(Request $request)
     {
+
         // Remove from user's list
         Connection::where("user_id", auth()->id())->where("connected_user", $request["connected_user"])->delete();
 

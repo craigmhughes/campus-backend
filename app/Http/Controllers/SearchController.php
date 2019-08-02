@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Validator;
 use App\User;
+use App\Connection;
 
 class SearchController extends Controller
 {
@@ -64,10 +65,21 @@ class SearchController extends Controller
             ->orWhere('mentee_subject', 'LIKE', $search_params[1])
             ->get()->except(Auth::id());
 
+        $existing_connections = Connection::where('user_id', $user->id)->get();
+
+        // Search results for existing connections and ignore when found.
+        foreach($matched_users as $key => $value){    
+            foreach($existing_connections as $connection){
+                if($value['id'] == $connection['connected_user']){
+                    unset($matched_users[$key]);
+                }
+            }
+        }
+
         if(strlen($search_params[0]) < 1){
-            return response()->json(["error" => "University name not given"], 404);
+            return response()->json(["error" => "University name not given"], 200);
         } else if (count($matched_users) < 1){
-            return response()->json(["error" => "No matched students"], 404);
+            return response()->json(["error" => "No matched students"], 200);
         }
 
         return response()->json(["success" => $matched_users], 200);
