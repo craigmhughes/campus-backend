@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use App\Events\RequestUpdate;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,6 +48,16 @@ Route::group([
     Route::delete('/connections', 'ConnectionsController@destroy');
     Route::post('/search/uni', 'SearchController@uni');
     Route::get('/search/users', 'SearchController@users');
+
+    Route::post('/sender', function(){
+
+        $message = request()->message;
+
+        broadcast(new RequestUpdate($message));
+
+        return response()->json(["success" => $message], 200);
+
+    });
     
 });
 
