@@ -65,12 +65,12 @@ class SearchController extends Controller
             ->orWhere('mentee_subject', 'LIKE', $search_params[1])
             ->get()->except(Auth::id());
 
-        $existing_connections = Connection::where('user_id', $user->id)->get();
+        $existing_connections = Connection::where('user_id', $user->id)->orWhere('connected_user', $user->id)->get();
 
         // Search results for existing connections and ignore when found.
         foreach($matched_users as $key => $value){    
             foreach($existing_connections as $connection){
-                if($value['id'] == $connection['connected_user']){
+                if($value['id'] == $connection['connected_user'] || $value['id'] == $connection['user_id']){
                     unset($matched_users[$key]);
                 }
             }

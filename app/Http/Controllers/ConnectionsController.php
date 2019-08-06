@@ -27,6 +27,14 @@ class ConnectionsController extends Controller
             array_push($user_list, User::where('id', $connection["connected_user"])->get()[0]);
         }
 
+        $connections = Connection::where('connected_user', auth()->id())->get();
+
+        // Add total users to list
+        foreach($connections as $connection){
+            // Get user returns array, get first find of array
+            array_push($user_list, User::where('id', $connection["user_id"])->get()[0]);
+        }
+
         return response()->json($user_list, 200);
     }
 
@@ -87,7 +95,7 @@ class ConnectionsController extends Controller
         Connection::where("user_id", auth()->id())->where("connected_user", $request["connected_user"])->delete();
 
         //  Remove user from deleted user's list
-        Connection::where("connected_user", $request["connected_user"])->where("user_id", auth()->id())->delete();
+        Connection::where("connected_user", auth()->id())->where("user_id", $request["connected_user"])->delete();
 
         return response()->json(200);
     }
