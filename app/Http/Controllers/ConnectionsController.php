@@ -7,6 +7,7 @@ use App\Connection;
 use App\User;
 use Illuminate\Support\Facades\Auth;
 use Validator;
+use App\Request as UserRequest;
 
 class ConnectionsController extends Controller
 {
@@ -51,6 +52,12 @@ class ConnectionsController extends Controller
         $connection->user_id = Auth::user()['id'];
         $connection->connected_user = $request['connected_user'];
         $connection->save();
+
+        // Remove from user's list
+        UserRequest::where("user_id", auth()->id())->where("requested_user", $request["connected_user"])->delete();
+
+        //  Remove user from deleted user's list
+        UserRequest::where("requested_user", auth()->id())->where("user_id", $request["connected_user"])->delete();
 
         return response()->json($connection, 201);
     }

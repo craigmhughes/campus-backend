@@ -41,23 +41,23 @@ Route::group([
 ], function ($router){
   
     Route::resource('/posts', 'PostsController', ['parameters' => ['post' => 'id']]);
-    Route::resource('/requests', 'ConnectionsController');
-    Route::delete('/requests', 'ConnectionsController@destroy');
+    Route::resource('/requests', 'RequestsController');
+    Route::delete('/requests', 'RequestsController@destroy');
 
     Route::resource('/connections', 'ConnectionsController');
     Route::delete('/connections', 'ConnectionsController@destroy');
     Route::post('/search/uni', 'SearchController@uni');
     Route::get('/search/users', 'SearchController@users');
 
-    Route::post('/sender', function(){
+    // Route::post('/requests', function(){
 
-        $message = request()->message;
+    //     $message = request();
 
-        broadcast(new RequestUpdate($message));
+    //     event(new RequestUpdate($message));
 
-        return response()->json(["success" => $message], 200);
+    //     return response()->json(["success" => "pushed to pusher"], 200);
 
-    });
+    // });
     
 });
 

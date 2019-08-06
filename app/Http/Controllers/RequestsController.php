@@ -2,7 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\RequestUpdate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Validator;
+use App\User;
+use App\Request as UserRequest;
 
 class RequestsController extends Controller
 {
@@ -13,13 +18,13 @@ class RequestsController extends Controller
      */
     public function index()
     {
-        $requests = Request::where('requested_user', auth()->id())->get();
+        $requests = UserRequest::where('requested_user', auth()->id())->get();
         $user_list = [];
 
         // Add total users to list
         foreach($requests as $request){
             // Get user returns array, get first find of array
-            array_push($user_list, User::where('id', $request["requested_user"])->get()[0]);
+            array_push($user_list, User::where('id', $request["user_id"])->get()[0]);
         }
 
         return response()->json($user_list, 200);
@@ -43,7 +48,7 @@ class RequestsController extends Controller
             return response()->json($validator->errors(), 400);
         }
 
-        $request = request::create($request->all());
+        $request = UserRequest::create($request->all());
         $request->user_id = Auth::user()['id'];
         $request->requested_user = $request['requested_user'];
         $request->save();
@@ -73,10 +78,10 @@ class RequestsController extends Controller
     {
 
         // Remove from user's list
-        request::where("user_id", auth()->id())->where("requested_user", $request["requested_user"])->delete();
+        UserRequest::where("user_id", auth()->id())->where("requested_user", $request["requested_user"])->delete();
 
         //  Remove user from deleted user's list
-        request::where("requested_user", $request["requested_user"])->where("user_id", auth()->id())->delete();
+        UserRequest::where("requested_user", auth()->id())->where("user_id", $request["requested_user"])->delete();
 
         return response()->json(200);
     }
