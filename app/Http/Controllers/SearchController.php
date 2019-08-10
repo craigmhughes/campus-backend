@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Validator;
 use App\User;
 use App\Connection;
+use App\Request as UserRequest;
 
 class SearchController extends Controller
 {
@@ -66,13 +67,20 @@ class SearchController extends Controller
             ->get()->except(Auth::id());
 
         $existing_connections = Connection::where('user_id', $user->id)->orWhere('connected_user', $user->id)->get();
+        $existing_requests = UserRequest::where('user_id', $user->id)->orWhere('requested_user', $user->id)->get();
 
         // Search results for existing connections and ignore when found.
         foreach($matched_users as $key => $value){    
             foreach($existing_connections as $connection){
                 if($value['id'] == $connection['connected_user'] || $value['id'] == $connection['user_id']){
                     unset($matched_users[$key]);
+                } else {
+                    
                 }
+            }
+
+            foreach($existing_requests as $req){
+                $value["requested"] = $value['id'] == $req['requested_user'] || $value['id'] == $req['user_id'];
             }
         }
 
@@ -81,6 +89,7 @@ class SearchController extends Controller
         } else if (count($matched_users) < 1){
             return response()->json(["error" => "No matched students"], 200);
         }
+
 
         return response()->json(["success" => $matched_users], 200);
     }
