@@ -15,4 +15,8 @@ class Conversation extends Model
         'sender_id', 'receiver_id'
     ];
 
+    public function messages(){
+        return $this->hasMany('App\Message', 'conversation_id');
+    }
+
 }

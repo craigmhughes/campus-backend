@@ -28,7 +28,6 @@ class ConversationsController extends Controller
      */
     public function store(Request $request)
     {
-        // return request()['receiver_id'];
 
         $rules = [
             'receiver_id' => 'required'
@@ -64,7 +63,14 @@ class ConversationsController extends Controller
      */
     public function show($id)
     {
-        //
+        $conversation = Conversation::find($id);
+
+        // Block users not in conversation from viewing
+        if(!($conversation['sender_id'] == Auth::user()['id'] || $conversation['receiver_id'] == Auth::user()['id'])){
+            return response()->json(["error" => "not authorized"], 401);
+        }
+
+        return response()->json(["messages" => Conversation::find($id)->messages], 200);
     }
 
     /**
@@ -75,6 +81,15 @@ class ConversationsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $conversation = Conversation::find($id);
+
+        // Block users not in conversation from viewing
+        if(!($conversation['sender_id'] == Auth::user()['id'] || $conversation['receiver_id'] == Auth::user()['id'])){
+            return response()->json(["error" => "not authorized"], 401);
+        }
+
+        $conversation->delete();
+
+        return response()->json(["success" => "conversation deleted"], 200);
     }
 }
