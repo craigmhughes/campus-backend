@@ -80,7 +80,9 @@ class SearchController extends Controller
             }
 
             foreach($existing_requests as $req){
-                $value["requested"] = $value['id'] == $req['requested_user'] || $value['id'] == $req['user_id'];
+                if($value['id'] == $req['requested_user'] || $value['id'] == $req['user_id']){
+                    $value["requested"] = true;
+                }
             }
         }
 

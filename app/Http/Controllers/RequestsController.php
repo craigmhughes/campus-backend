@@ -21,6 +21,10 @@ class RequestsController extends Controller
         $requests = UserRequest::where('requested_user', auth()->id())->get();
         $user_list = [];
 
+        if (request()["count"]){
+            return response()->json(["count" => "returning count"], 200);
+        }
+
         // Add total users to list
         foreach($requests as $request){
             // Get user returns array, get first find of array
@@ -28,6 +32,29 @@ class RequestsController extends Controller
         }
 
         return response()->json($user_list, 200);
+    }
+
+    /**
+     * Display length of requests
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function count()
+    {
+        $requests = UserRequest::where('requested_user', auth()->id())->get();
+        $user_list = [];
+
+        // Add total users to list
+        foreach($requests as $request){
+            // Get user returns array, get first find of array
+            array_push($user_list, User::where('id', $request["user_id"])->get()[0]);
+        }
+
+        return response()->json(count($user_list), 200);
+    }
+
+    public function show(){
+
     }
 
     /**
