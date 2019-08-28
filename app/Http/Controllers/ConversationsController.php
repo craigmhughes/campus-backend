@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Validator;
 use App\User;
 use App\Conversation;
+use App\Message;
 
 class ConversationsController extends Controller
 {
@@ -17,7 +18,23 @@ class ConversationsController extends Controller
      */
     public function index()
     {
-        return response()->json(Conversation::where('sender_id', auth()->id())->orWhere('receiver_id', auth()->id())->get(), 200);
+        $conversations = Conversation::where('sender_id', auth()->id())->orWhere('receiver_id', auth()->id())->get();
+        $current_user = Auth::id();
+        $users = [];
+        $messages = [];
+
+        // Check each conversation for user information.
+        foreach($conversations as $conv){
+            // Disregard authed user & push to users array.
+            $id = $conv["sender_id"] == $current_user ? $conv["receiver_id"] : $conv["sender_id"];
+            array_push($users, User::find($id));
+
+            // Get Message Preview. Push most recent message to array.
+            array_push($messages, Message::where("conversation_id", $conv["id"])->orderBy('created_at', 'DESC')->take(1)->get()[0]);
+        }
+
+        
+        return response()->json(["users" => $users, "messages" => $messages], 200);
     }
 
     /**
@@ -70,7 +87,7 @@ class ConversationsController extends Controller
             return response()->json(["error" => "not authorized"], 401);
         }
 
-        return response()->json(["messages" => Conversation::find($id)->messages], 200);
+        return response()->json(["messages" => $conversation->messages], 200);
     }
 
     /**

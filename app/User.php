@@ -70,4 +70,7 @@ class User extends Authenticatable implements JWTSubject
         return 'App.User.' . $this->id;
     }
 
+    public function connections(){
+        return $this->hasMany('App\Connection');
+    }
 }
