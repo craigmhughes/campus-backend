@@ -45,7 +45,8 @@ Route::group([
     Route::post('/requests', 'RequestsController@store');
     Route::delete('/requests', 'RequestsController@destroy');
     Route::get('/requests/count', 'RequestsController@count');
-    Route::resource('conversations', 'ConversationsController');
+    Route::resource('/conversations', 'ConversationsController');
+    Route::resource('/messages', 'MessagesController');
 
     Route::resource('/connections', 'ConnectionsController');
     Route::delete('/connections', 'ConnectionsController@destroy');
