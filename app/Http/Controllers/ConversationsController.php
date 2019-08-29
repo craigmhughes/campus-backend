@@ -34,7 +34,7 @@ class ConversationsController extends Controller
         }
 
         
-        return response()->json(["users" => $users, "messages" => $messages], 200);
+        return response()->json(["conversations" => $conversations, "users" => $users, "messages" => $messages], 200);
     }
 
     /**
@@ -83,11 +83,13 @@ class ConversationsController extends Controller
         $conversation = Conversation::find($id);
 
         // Block users not in conversation from viewing
-        if(!($conversation['sender_id'] == Auth::user()['id'] || $conversation['receiver_id'] == Auth::user()['id'])){
+        if(!($conversation['sender_id'] == Auth::id() || $conversation['receiver_id'] == Auth::id())){
             return response()->json(["error" => "not authorized"], 401);
         }
 
-        return response()->json(["messages" => $conversation->messages], 200);
+        $recipient = User::find($conversation['sender_id'] == Auth::id() ? $conversation['receiver_id'] : $conversation['sender_id']);
+
+        return response()->json(["messages" => $conversation->messages, "recipient" => $recipient], 200);
     }
 
     /**
